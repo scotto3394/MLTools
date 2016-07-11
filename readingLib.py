@@ -3,7 +3,6 @@ import zipfile
 import tarfile
 from pymongo import MongoClient
 import sys
-from itertools import imap
 import csv
 import subprocess
 
@@ -83,7 +82,6 @@ def largeFile(compressedFile, targetFile, dbCollection):
     # Use mongoinsert to insert in bulk
     print("Inserting document... (This may take a while)")
     subprocess.call(['mongoimport','-d',dbString, '-c', collectionString, '--type','csv','--file',targetFile,'--headerline'])
-    # insertion = MongoClient('mongoimport -d {} -c {} --type csv --file {} --headerline'.format(dbString, collectionString, targetFile))
 
     # Clean up
     print("Cleaning up...")
@@ -91,7 +89,7 @@ def largeFile(compressedFile, targetFile, dbCollection):
 
     return cnt
 
-def insertDB(fileName, dbName, collectionPairs = {}, folder = False, verbose = True, Override = False):
+def insertMongo(fileName, dbName, collectionPairs = {}, folder = False, verbose = True, Override = False):
     # Folder vs File detection, db setup
     if folder:
         absFilePath = os.path.abspath(fileName)
@@ -144,3 +142,7 @@ def insertDB(fileName, dbName, collectionPairs = {}, folder = False, verbose = T
             if verbose:
                 print("Done!")
             smallF.close()
+
+def insertSQL(fileName):
+    #only supports SQLite right now
+    pass
