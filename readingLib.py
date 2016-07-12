@@ -6,47 +6,9 @@ import sys
 import csv
 import subprocess
 
-
-def extractCSV(fileName, folder = False, verbose = True, Override = False):
-
-    # Folder vs File detection
-    if folder:
-        absFilePath = os.path.abspath(fileName)
-        filePaths = [os.path.join(absFilePath,name) for name in os.listdir(absFilePath)]
-    else:
-        filePaths = [os.path.abspath(fileName)]
-
-    for file in filePaths:
-        dirname, basename = os.path.split(file)
-        nameSplit = basename.split('.')
-
-        # Check if file has already been processed (or doesn't need to be)
-        if os.path.exists(os.path.join(dirname, nameSplit[0] + ".csv")) and ~Override:
-            if verbose:
-                print("{} already processed".format(nameSplit[0] + ".csv"))
-
-            continue
-
-        if verbose:
-            print("Processing {}".format(basename))
-        # Extract the file
-        if nameSplit[-1] == "zip":
-            zipF = zipfile.ZipFile(file,'r')
-            if verbose:
-                print("Extracting...")
-            zipF.extractall(dirname)
-            if verbose:
-                print("Done!")
-            zipF.close()
-        if nameSplit[-1]  == "tar" or nameSplit[-1]  == "bz":
-            tarF = tarfile.TarFile(file,'r')
-            if verbose:
-                print("Extracting...")
-            tarF.extractall(dirname)
-            if verbose:
-                print("Done!")
-            tarF.close()
-
+#==============================================================================
+# Helper Functions
+#==============================================================================
 def getDatabase(database):
     client = MongoClient()
     db = client[database]
@@ -89,6 +51,52 @@ def largeFile(compressedFile, targetFile, dbCollection):
 
     return cnt
 
+def cleanDB(condition, collectionObject):
+    result = collectionObject.delete_many(condition)
+    return result
+#===============================================================================
+# Extraction Methods
+#===============================================================================
+def extractCSV(fileName, folder = False, verbose = True, Override = False):
+
+    # Folder vs File detection
+    if folder:
+        absFilePath = os.path.abspath(fileName)
+        filePaths = [os.path.join(absFilePath,name) for name in os.listdir(absFilePath)]
+    else:
+        filePaths = [os.path.abspath(fileName)]
+
+    for file in filePaths:
+        dirname, basename = os.path.split(file)
+        nameSplit = basename.split('.')
+
+        # Check if file has already been processed (or doesn't need to be)
+        if os.path.exists(os.path.join(dirname, nameSplit[0] + ".csv")) and ~Override:
+            if verbose:
+                print("{} already processed".format(nameSplit[0] + ".csv"))
+
+            continue
+
+        if verbose:
+            print("Processing {}".format(basename))
+        # Extract the file
+        if nameSplit[-1] == "zip":
+            zipF = zipfile.ZipFile(file,'r')
+            if verbose:
+                print("Extracting...")
+            zipF.extractall(dirname)
+            if verbose:
+                print("Done!")
+            zipF.close()
+        if nameSplit[-1]  == "tar" or nameSplit[-1]  == "bz":
+            tarF = tarfile.TarFile(file,'r')
+            if verbose:
+                print("Extracting...")
+            tarF.extractall(dirname)
+            if verbose:
+                print("Done!")
+            tarF.close()
+
 def insertMongo(fileName, dbName, collectionPairs = {}, folder = False, verbose = True, Override = False):
     # Folder vs File detection, db setup
     if folder:
@@ -127,6 +135,7 @@ def insertMongo(fileName, dbName, collectionPairs = {}, folder = False, verbose 
                 if subFile in collectionPairs:
                     collectionName = collectionPairs[subFile]
                 else:
+                    sys.stdout.flush()
                     collectionName = raw_input("Input Collection name for {}: ".format(subFile))
 
                 collection = db[collectionName]
