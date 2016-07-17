@@ -1,0 +1,25 @@
+{
+"readingLib.py":{
+    "Comments":
+        ["Add a 'very large File' component to the database csv reader. This would split the file and use parallel mongoimports to read into the database.",
+	    "Add in JSON/XML support and switches (instead of just .csv)",
+        "Build in SQL insert functionality",
+        "Build the 'override' feature such that it updates information in the database"],
+    "insertMongo":
+        ["Build in DB configuration"]
+    },
+"timeLib.py":{
+    "Comments":
+        [],
+    "windowData":
+        ["Add in Kernel functionality other than a uniform weighting"]
+    },
+"plottingLib.py":{
+    "Comments":
+        [],
+    "figtoHTML":
+        ["Build in more save functionality and options."],
+    "windowData":
+        ["Add in padding options and centering options for the window"]
+    }
+}
