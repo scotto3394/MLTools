@@ -8,7 +8,7 @@ def windowData(data, windowSize, kernel = lambda x: np.mean(x)):
         window.append(n)
         yield kernel(window)
     
-
+#hi
 def rSum(data):
     total = 0
     output = []
