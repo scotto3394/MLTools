@@ -10,12 +10,34 @@ import subprocess
 # Helper Functions
 #==============================================================================
 def getDatabase(database):
+    '''
+    Initialize connection to database (local MongoDB server).
+
+    Args: 
+        database: Name of database to use.
+    
+    Returns:
+        db: pymongo database object
+    
+    Note: Functionality is extremely limited for this function at the moment.
+    '''
     client = MongoClient()
     db = client[database]
 
     return db
 
 def smallFile(compressedFile, targetFile, dbCollection):
+    '''
+    File to insert small compressed files into a specified MongoDB database collection (via 10000 line batches)
+
+    Args:
+        compressedFile: The compressed file were the data is.
+        targetFile: The specific file, inside the compressed file, which we are inserting.
+        dbCollection: The pymongo collection object we are inserting into.
+
+    Returns:
+        cnt: Number of lines inserted from the file into the database collection.
+    '''
 
     with compressedFile.open(targetFile,'r') as f: #Look into compressed File
         r = csv.DictReader(f)
@@ -32,6 +54,17 @@ def smallFile(compressedFile, targetFile, dbCollection):
     return cnt
 
 def largeFile(compressedFile, targetFile, dbCollection):
+    '''
+    File to larger compressed files into a specified MongoDB database collection (via decompressing and large batch insert)
+
+    Args:
+        compressedFile: The compressed file were the data is.
+        targetFile: The specific file, inside the compressed file, which we are inserting.
+        dbCollection: The pymongo collection object we are inserting into.
+
+    Returns:
+        cnt: Number of lines inserted from the file into the database collection.
+    '''
     collectionString = str(dbCollection.name)
     dbString = str(dbCollection.database.name)
 
@@ -52,12 +85,34 @@ def largeFile(compressedFile, targetFile, dbCollection):
     return cnt
 
 def cleanDB(condition, collectionObject):
+    '''
+    Pymongo interface to remove all the documents from a collection that meet a certain condition.
+
+    Args:
+        condition (JSON): removal condition for the documents
+        collectionObject: pymongo collection object we are removing documents from
+
+    Returns:
+        result: object containing information about the size/success of the deletion
+    '''
     result = collectionObject.delete_many(condition)
     return result
 #===============================================================================
 # Extraction Methods
 #===============================================================================
 def extractCSV(fileName, folder = False, verbose = True, Override = False):
+    '''
+    Extract a compressed .csv file (from zip/tar).
+
+    Args:
+        fileName: Name of the file/folder you are decompressing.
+        folder (Bool): Flag indicating whether you are extracting a file or a folder full of files.
+        verbose (Bool): Flag indicating whether you want verbose output.
+        Override (Bool): Flag indcating whether you want to overwrite the file if already extracted.
+
+    Returns:
+        None
+    '''
 
     # Folder vs File detection
     if folder:
@@ -98,6 +153,20 @@ def extractCSV(fileName, folder = False, verbose = True, Override = False):
             tarF.close()
 
 def insertMongo(fileName, dbName, collectionPairs = {}, folder = False, verbose = True, Override = False):
+    '''
+    Extract data from a compressed .csv file (from zip/tar) and inserts into (local) MongoDB database.
+
+    Args:
+        fileName: Name of the file/folder you are decompressing.
+        dbName: Name of the database to insert files into.
+        collectionPairs (Dict): Information specifying what collection to insert the file information into, e.g. {fileName1: collectionName1, fileName2, collectionName2}. If not specified, user will be prompted on stdin.
+        folder (Bool): Flag indicating whether you are extracting a file or a folder full of files.
+        verbose (Bool): Flag indicating whether you want verbose output.
+        Override (Bool): Flag indcating whether you want to overwrite the file if already extracted.
+
+    Returns:
+        None
+    '''
     # Folder vs File detection, db setup
     if folder:
         absFilePath = os.path.abspath(fileName)

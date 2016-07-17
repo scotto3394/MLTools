@@ -12,14 +12,13 @@
     "Comments":
         [],
     "windowData":
-        ["Add in Kernel functionality other than a uniform weighting"]
+        ["Add in Kernel functionality other than a uniform weighting",
+        "Add in padding options and centering options for the window"]
     },
 "plottingLib.py":{
     "Comments":
         [],
     "figtoHTML":
-        ["Build in more save functionality and options."],
-    "windowData":
-        ["Add in padding options and centering options for the window"]
+        ["Build in more save functionality and options."]
     }
 }
