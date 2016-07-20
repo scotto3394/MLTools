@@ -1,0 +1,22 @@
+Machine Learning Tools (MLTools)
+Version: N/A
+Author: Scott Manifold (scotto3394)
+
+
+Language: Python 2.7 (with some Python 3.5 support that needs to be tested further)
+
+Summary:
+This is a personal toolkit built for me to prep, analyze, and work with unfamiliar data. The long term goal is to have a personal library of tools that will handle almost any (small scale) analysis of data, from prepping to presentation.
+
+Note: Current functionality is quite lacking and not particularly usable.
+
+Files:
+- readingLib.py: Basic module for importing, extracting, and loading data (small scale ETL).
+- plottingLib.py: Basic module for visualizing data. 
+- timeLib.py: Basic module for working with Time Series data.
+
+
+
+For questions, comments, concerns, bugs, or any other form of communication, contact via the following:
+1) Address Line: Github MLTools: <Topic here>
+2) Email: shm.qed@gmail.com
